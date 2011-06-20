@@ -1,0 +1,44 @@
+<?xml version="1.0"?>
+
+<overlay
+    id="dcpOfflineDebugMainOverlay"
+    xmlns="http://www.mozilla.org/keymaster/gatekeeper/there.is.only.xul">
+
+    <!--  DOM Inspector -->
+    <script
+        type="application/javascript"
+        src="chrome://inspector/content/hooks.js" />
+
+    <!--  Venkman -->
+    <script
+        type="application/javascript"
+        src="chrome://venkman/content/venkman-overlay.js" />
+
+    <commandset id="main-commands">
+        <command
+            id="Debug:Inspector"
+            oncommand="inspectDOMDocument(content ? content.document : document);" />
+        <command
+            id="Debug:Venkman"
+            oncommand="start_venkman();" />
+    </commandset>
+
+    <menubar
+        id="main-menubar">
+        <menu
+            id="debug-menu"
+            label="Debug">
+            <menupopup>
+                <menuitem
+                    id="debug-launch-venkman"
+                    label="Venkman"
+                    command="Debug:Venkman" />
+                <menuitem
+                    id="debug-launch-inspector"
+                    label="DOM Inspector"
+                    command="Debug:Inspector" />
+            </menupopup>
+        </menu>
+    </menubar>
+
+</overlay>

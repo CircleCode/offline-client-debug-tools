@@ -1,0 +1,3 @@
+content anakeendebug chrome/content/dcpofflinedebug/
+
+overlay chrome://dcpoffline/content/main.xul chrome://anakeendebug/content/mainOverlay.xul

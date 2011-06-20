@@ -1,0 +1,3 @@
+content dcpofflinedebug chrome/content/dcpofflinedebug/
+
+overlay chrome://dcpoffline/content/main.xul chrome://dcpofflinedebug/content/mainOverlay.xul

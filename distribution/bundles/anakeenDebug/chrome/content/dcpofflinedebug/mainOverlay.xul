@@ -1,0 +1,44 @@
+<?xml version="1.0"?>
+
+<overlay
+    id="dcpOfflineDebugMainOverlay"
+    xmlns="http://www.mozilla.org/keymaster/gatekeeper/there.is.only.xul">
+
+    <!--  DOM Inspector -->
+    <script
+        type="application/javascript"
+        src="chrome://inspector/content/hooks.js" />
+
+    <!--  Venkman -->
+    <script
+        type="application/javascript"
+        src="chrome://venkman/content/venkman-overlay.js" />
+
+    <commandset id="main-commands">
+        <command
+            id="AnkDebug:Eric"
+            oncommand='window.open("chrome://anakeenDebug/content/debug-eric.xul","Eric", "chrome,centerscreen");' />
+        <command
+            id="AnkDebug:Mat"
+            oncommand='window.open("chrome://anakeenDebug/content/debug-mat.xul","Mat", "chrome,centerscreen");' />
+    </commandset>
+
+    <menubar
+        id="main-menubar">
+        <menu
+            id="debug-menu-anakeen"
+            label="Debug anakeen">
+            <menupopup>
+                <menuitem
+                    id="launch-debug-mat"
+                    label="Matthieu"
+                    command="AnkDebug:Mat" />
+                <menuitem
+                    id="launch-debug-eric"
+                    label="Eric"
+                    command="AnkDebug:Eric" />
+            </menupopup>
+        </menu>
+    </menubar>
+
+</overlay>
