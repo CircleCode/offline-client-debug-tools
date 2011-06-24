@@ -14,6 +14,13 @@
         type="application/javascript"
         src="chrome://venkman/content/venkman-overlay.js" />
 
+    <script type="application/javascript">
+        function toOpenWindowByType(inType, uri) {
+            var winopts = "chrome,extrachrome,menubar,resizable,scrollbars,status,toolbar";
+            window.open(uri, "_blank", winopts);
+        }
+    </script>
+
     <commandset id="main-commands">
         <command
             id="Debug:Inspector"
