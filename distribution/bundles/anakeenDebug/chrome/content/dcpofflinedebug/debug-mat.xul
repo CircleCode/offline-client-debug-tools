@@ -12,7 +12,7 @@
 
 <?xml-stylesheet href="chrome://dcpoffline/content/bindings/ckeditor/ckeditor-binding.css" type="text/css"?>
 
-<window id="debug-ericDTD" 
+<window id="debug-mat"
     title="Mat's debug window"
     width="800px"
     height="600px"
@@ -22,74 +22,12 @@
 
     <script type="application/javascript" 
             src="chrome://anakeenDebug/content/debug-mat.js"/>
-        
-    <toolbox id="main-toolbox">
-        <toolbar>
-            <menubar id="main-menubar">
-                <menu id="debug-menu" label="&debug;">
-                    <menupopup>
-                        <menuitem id="debug-launch-debugger" label="&menu.debug.launch.venkman;" oncommand="start_venkman()"/>
-                        <menuitem id="debug-launch-method" label="&menu.debug.launch.method;" oncommand="customDebug(1);"/>
-                        <menuitem id="debug-launch-method" label="&menu.debug.launch.method;" oncommand="customDebug(2);"/>
-                        <menuitem id="debug-launch-method" label="&menu.debug.launch.method;" oncommand="customDebug(3);"/>
-                        <menuitem id="debug-launch-method" label="&menu.debug.launch.method;" oncommand="customDebug(4);"/>
-                        <menuitem id="debug-launch-method" label="&menu.debug.launch.method;" oncommand="customDebug(5);"/>
-                    </menupopup>
-                </menu>
-                <menu id="organize-menu" label="Organize" disabled="true">
-                    <menupopup>
-                        <menu id="organize-menu-new-menu" label="New">
-                            <menupopup>
-                                <menuitem id="organize-menu-new-menu-folder" label="Folder"/>
-                                <menuitem id="organize-menu-new-menu-search" label="Search"/>
-                            </menupopup>
-                        </menu>
-                    </menupopup>
-                </menu>
-            </menubar>
-        </toolbar>
-    </toolbox>
     
     <vbox>
         <hbox>
-            <button label="test bindings" oncommand="testBinding();"/>
-            <button label="change tab" oncommand="changeTab();"/>
+            <button label="test entities recuperation" oncommand="testGetEntities();"/>
+            <button label="test update" oncommand="checkUpdates();"/>
         </hbox>
     </vbox>
-    
-    <hbox flex="1">
-        <vbox id="onefam-icons" width="48px"/>
-        <tabbox id="onefam-summaries" width="300px" persist="width">
-            <tabs>
-                <tab label="&welcome;"/>
-            </tabs>
-            <tabpanels flex="1">
-                <tabpanel>
-                    <hbox/>
-                </tabpanel>
-            </tabpanels>
-        </tabbox>
-        <splitter collapse="before">
-            <grippy/>
-        </splitter>
-        <tabbox id="onefam-content-tabbox" flex="1">
-            <tabs>
-                <tab label="&welcome;"/>
-            </tabs>
-            <tabpanels flex="1">
-                <tabpanel>
-                    <label value="&welcome.message;"/>
-                </tabpanel>
-            </tabpanels>
-        </tabbox>
-    </hbox>
-    
-    <statusbar>
-        <hbox flex ="1">
-            <statusbarpanel label="" flex="1"/>
-            <progressmeter mode="determined"/>
-            <statusbarpanel label="Connection status"/>
-        </hbox>
-    </statusbar>
 
 </window>

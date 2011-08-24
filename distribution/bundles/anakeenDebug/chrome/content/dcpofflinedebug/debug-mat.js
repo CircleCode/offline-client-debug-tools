@@ -1,109 +1,138 @@
 // start_venkman();
 
-const Cc = Components.classes;
-const Ci = Components.interfaces;
-const Cu = Components.utils;
+Components.utils.import("resource://gre/modules/Services.jsm");
 
-Cu.import("resource://gre/modules/Services.jsm");
+Components.utils.import("resource://modules/logger.jsm");
+Components.utils.import("resource://modules/docManager.jsm");
+Components.utils.import("resource://modules/events.jsm");
 
-Cu.import("resource://modules/logger.jsm");
-Cu.import("resource://modules/docManager.jsm");
-Cu.import("resource://modules/storageManager.jsm");
+function testGetEntities() {
 
-/* enabling password manager */
-Cc["@mozilla.org/login-manager;1"].getService(Ci.nsILoginManager);
+    var nsIFilePicker = Components.interfaces.nsIFilePicker;
 
-/* debug stuff */
+    var sourceLocale = [];
 
-/* required for venkman */
-function toOpenWindowByType(inType, uri) {
-    var winopts = "chrome,extrachrome,menubar,resizable,scrollbars,status,toolbar";
-    window.open(uri, "_blank", winopts);
-}
+    // Select base for all locales
+    var baseFp = Components.classes["@mozilla.org/filepicker;1"]
+            .createInstance(nsIFilePicker);
+    baseFp.init(window, "Locales base directory", nsIFilePicker.modeGetFolder);
 
-function changeTab(){
-    var tabIndex = {
-        value : '0'
-    };
-    var result = Services.prompt.prompt(null, "Tab index",
-            "enter tab index", tabIndex, null, {});
-    if (result) {
-        document.getElementById('onefam-content-tabbox').tabs.selectedIndex = tabIndex.value;
-    };
-}
+    var baseRv = baseFp.show();
+    if (baseRv == nsIFilePicker.returnOK) {
+        var baseDir = baseFp.file;
+        var basePath = baseFp.file.path;
 
-function openDocument(initid, mode) {
-    mode = mode || 'view';
-    
-    var doc;
-    var template;
-    var box, tabPanel, tabBox, tab, tabId, tabPanelId;
-    
-    if (initid) {
-        try {
-            doc = docManager.getLocalDocument({
-                initid : initid
-            });
-            template = doc.getBinding(mode);
-            if (template) {
-                template = 'url(file://' + template + ')';
-            } else {
-                logConsole("using [file:///media/Data/Workspaces/xul/offline-client/chrome/content/bindings/families/document-ZOO_ANIMAL-Binding.xml#document-ZOO_ANIMAL-view)] as default template");
-                template = "url(file:///media/Data/Workspaces/xul/offline-client/chrome/content/bindings/families/document-ZOO_ANIMAL-Binding.xml#document-ZOO_ANIMAL-view)";
-            }
-            logConsole(template);
-            if (template) {
-                tabBox = document.getElementById('onefam-content-tabbox');
-                tabId = 'tab-document-'+initid;
-                tabPanelId = 'tabPanel-document-'+initid;
-                tab = document.getElementById(tabId);
-                tabPanel = document.getElementById('tabPanel-document-'+initid);
-                if(! (tabPanel && tab) ){
-                    //TODO: clean tabpanels and tabs
-                    box = document.createElement('vbox');
-                    box.setAttribute('flex', 1);
-                    box.setAttribute('initid', initid);
-                    box.style.MozBinding = template;
-        
-                    tabPanel = document.createElement('tabpanel');
-                    tabPanel.setAttribute('flex', 1);
-                    tabPanel.appendChild(box);
-                    tabPanel.id = tabPanelId;
-                    
-                    tabBox.tabpanels.appendChild(tabPanel);
-                    
-                    tab = tabBox.tabs.appendItem(doc.getTitle());
-                    tab.id = tabId;
-                    tab.linkedpanel = tabPanelId;
+        // select locale from which others should be updated
+        var sourceFp = Components.classes["@mozilla.org/filepicker;1"]
+                .createInstance(nsIFilePicker);
+        sourceFp.init(window, "Source Locale directory",
+                nsIFilePicker.modeGetFolder);
+
+        var sourceRv = sourceFp.show();
+        if (sourceRv == nsIFilePicker.returnOK) {
+            var sourceDir = sourceFp.file;
+            var sourcePath = sourceFp.file.path;
+
+            // get directory for each locale
+            var localeDirectories = [];
+            while (sourceDir.directoryEntries.hasMoreElements()) {
+                var file = sourceDir.directoryEntries.getNext();
+                if (file.isDirectory()) {
+                    localeDirectories.push(file);
                 }
-                
-                tabBox.tabs.selectedItem = tab;
-                tabBox.tabpanels.selectedPanel = tabPanel;
-            } else {
-                throw new BindException(
-                        "openDocument :: no template for initid: " + initid);
             }
-        } catch (e) {
-            alert(e.toString());
-            throw (e);
         }
-    } else {
-        throw new ArgException("openDocument :: missing initid argument");
     }
-    return tabPanel;
+    ;
+
+};
+
+function getLocaleFiles(dir, localeFiles, relativePath) {
+    while (dir.directoryEntries.hasMoreElements()) {
+        var file = sourceDir.directoryEntries.getNext();
+        if (file.isDirectory()) {
+            relativePath.push(file.leafName);
+            getLocaleFiles(file, localeFiles, relativePath);
+            relativePath.pop();
+        } else {
+            localeFiles.push({
+                file : file,
+                relativePath : relativePath,
+                leafName : file.leafName,
+                values : getLocaleStrings(file)
+            });
+        }
+    }
 }
 
-function testBinding() {
-    var docid = {
-        value : ''
-    };
-    var result = Services.prompt.prompt(null, "Test Binding",
-            "enter document id", docid, null, {});
-    if (result) {
-        openDocument(docid.value);
-    };
+function getLocaleStrings(file) {
+    if(file.leafName.match(/.*\.dtd/)){
+        return getLocaleStringsFromDtd(file);
+    } else if(file.leafName.match(/.*\.properties/)){
+        return getLocaleStringsFromProperties(file);
+    } else {
+        alert(file.leafName + ' could not be detected as a dtd or properties file');
+    }
 }
 
-function customDebug(level) {
-    log("starting customDebug at level " + level);
+function getLocaleStringsFromDtd(file){
+    var bundle = {};
+    
+    return bundle;
 }
+
+function getLocaleStringsFromProperties(file){
+    var bundle = {};
+    
+    return bundle;
+}
+
+function checkUpdates() {
+    var updateListener = {
+
+        onProgress : function(request, position, totalSize) {
+            alert('update check progress : ' + position + '/' + totalSize);
+        },
+
+        onCheckComplete : function(request, updates, updateCount) {
+            // after retrieve sucessfully updates.xml infos, app
+            // will execute this code
+
+            alert('update check complete ( ' + updateCount
+                    + ' updates available )');
+
+            if (updateCount > 0) {
+                // don't ask user for applying updates. do it at
+                // all.
+                var updater = Components.classes["@mozilla.org/updates/update-service;1"]
+                        .createInstance(Components.interfaces.nsIApplicationUpdateService);
+
+                // select the most important update (major, complete)
+                var update = updater.selectUpdate(updates, updateCount);
+                var download = updater.downloadUpdate(update, false);
+
+                // if downloadUpdate is async, why return a
+                // simple useless state string?
+                alert('download status: ' + download);
+            }
+        },
+
+        onError : function(request, update) {
+            alert('update check error');
+        },
+
+        QueryInterface : function(aIID) {
+            if (!aIID.equals(Components.interfaces.nsIUpdateCheckListener)
+                    && !aIID.equals(Components.interfaces.nsISupports))
+                throw Components.results.NS_ERROR_NO_INTERFACE;
+            return this;
+        }
+    };
+
+    var checker = Components.classes["@mozilla.org/updates/update-checker;1"].
+
+    createInstance(Components.interfaces.nsIUpdateChecker);
+
+    checker.checkForUpdates(updateListener, true);
+
+};
